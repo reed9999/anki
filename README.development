@@ -1,3 +1,11 @@
+Windows & Mac users
+---------------------
+
+reed9999 note: This branch is me attempting to refactor anki in a way
+that makes sense. I will try to only commit refactors that pass all tests.
+
+To start this branch I went a few commits back on anki master, just so I can have some bugs to play with if I want.
+
 Running from source
 --------------------
 
