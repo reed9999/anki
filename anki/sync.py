@@ -36,6 +36,76 @@ class Syncer:
         # time
         self.col.save()
 
+        rv = self._sync_login_and_metadata()
+        if rv:
+            return rv
+        rv = self._check_collection_is_valid()
+        if rv:
+            return rv
+        self._sync_deletions()
+        self._stream_large_tables_from_server()
+        self._stream_to_server()
+        rv = self._sanity_check_step()
+        if rv:
+            return rv
+        self.finalize()
+        return "success"
+
+    # Apparently this one is just a wrapper for sanityCheck so perhaps there
+    # are other ways to simplify
+    def _sanity_check_step(self):
+        # step 5: sanity check
+        runHook("sync", "sanity")
+        c = self.sanityCheck()
+        ret = self.server.sanityCheck2(client=c)
+        if ret['status'] != "ok":
+            # roll back and force full sync
+            self.col.rollback()
+            self.col.modSchema(False)
+            self.col.save()
+            return "sanityCheckFailed"
+
+    def finalize(self):
+        # finalize
+        runHook("sync", "finalize")
+        mod = self.server.finish()
+        self.finish(mod)
+
+    def _stream_to_server(self):
+        # step 4: stream to server
+        runHook("sync", "client")
+        while 1:
+            runHook("sync", "stream")
+            chunk = self.chunk()
+            self.col.log("client chunk", chunk)
+            self.server.applyChunk(chunk=chunk)
+            if chunk['done']:
+                break
+
+    def _stream_large_tables_from_server(self):
+        # step 3: stream large tables from server
+        runHook("sync", "server")
+        while 1:
+            runHook("sync", "stream")
+            chunk = self.server.chunk()
+            self.col.log("server chunk", chunk)
+            self.applyChunk(chunk=chunk)
+            if chunk['done']:
+                break
+
+    def _sync_deletions(self):
+        # step 2: deletions
+        runHook("sync", "meta")
+        lrem = self.removed()
+        rrem = self.server.start(
+            minUsn=self.minUsn, lnewer=self.lnewer, graves=lrem)
+        self.remove(rrem)
+        # ...and small objects
+        lchg = self.changes()
+        rchg = self.server.applyChanges(changes=lchg)
+        self.mergeChanges(lchg, rchg)
+
+    def _sync_login_and_metadata(self):
         # step 1: login & metadata
         runHook("sync", "login")
         meta = self.server.meta()
@@ -74,53 +144,12 @@ class Syncer:
             self.col.log("schema diff")
             return "fullSync"
         self.lnewer = self.lmod > self.rmod
+
+    def _check_collection_is_valid(self):
         # step 1.5: check collection is valid
         if not self.col.basicCheck():
             self.col.log("basic check")
             return "basicCheckFailed"
-        # step 2: deletions
-        runHook("sync", "meta")
-        lrem = self.removed()
-        rrem = self.server.start(
-            minUsn=self.minUsn, lnewer=self.lnewer, graves=lrem)
-        self.remove(rrem)
-        # ...and small objects
-        lchg = self.changes()
-        rchg = self.server.applyChanges(changes=lchg)
-        self.mergeChanges(lchg, rchg)
-        # step 3: stream large tables from server
-        runHook("sync", "server")
-        while 1:
-            runHook("sync", "stream")
-            chunk = self.server.chunk()
-            self.col.log("server chunk", chunk)
-            self.applyChunk(chunk=chunk)
-            if chunk['done']:
-                break
-        # step 4: stream to server
-        runHook("sync", "client")
-        while 1:
-            runHook("sync", "stream")
-            chunk = self.chunk()
-            self.col.log("client chunk", chunk)
-            self.server.applyChunk(chunk=chunk)
-            if chunk['done']:
-                break
-        # step 5: sanity check
-        runHook("sync", "sanity")
-        c = self.sanityCheck()
-        ret = self.server.sanityCheck2(client=c)
-        if ret['status'] != "ok":
-            # roll back and force full sync
-            self.col.rollback()
-            self.col.modSchema(False)
-            self.col.save()
-            return "sanityCheckFailed"
-        # finalize
-        runHook("sync", "finalize")
-        mod = self.server.finish()
-        self.finish(mod)
-        return "success"
 
     def meta(self):
         return dict(
