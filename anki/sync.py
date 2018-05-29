@@ -53,7 +53,17 @@ class Syncer:
         self.server = server
 
     def sync(self):
-        "Returns 'noChanges', 'fullSync', 'success', etc"
+        """
+        Main synching method
+
+        Pre-refactoring this method was 90 lines.  It has been refactored into
+        components to reflect the chronological flow.  Where sync was returning
+        strings to reflect aberrant conditions, the component return value is
+        being checked and returned instead.  However, conversion is underway
+        to use exceptions to navigate flow.
+
+        :returns 'noChanges', 'fullSync', 'success', etc
+        """
         self.syncMsg = ""
         self.uname = ""
         # if the deck has any pending changes, flush them first and bump mod
@@ -61,17 +71,15 @@ class Syncer:
         self.col.save()
 
         rv = self._sync_login_and_metadata()
-        if rv:
-            return rv
+        if rv: return rv
         rv = self._check_collection_is_valid()
-        if rv:
-            return rv
+        if rv: return rv
         self._sync_deletions()
         self._stream_large_tables_from_server()
         self._stream_to_server()
         rv = self._sanity_check_step()
-        if rv:
-            return rv
+        if rv: return rv
+
         self.finalize()
         return "success"
 
