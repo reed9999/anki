@@ -385,6 +385,9 @@ class SyncThread(QThread):
             else:
                 self.fireEvent("error", log)
             return
+        # Many of these return values will be refactored to an exception-based
+        # flow. E.g. BadSyncAuthorisation,
+
         if ret == "badAuth":
             return self.fireEvent("badAuth")
         elif ret == "clockOff":

@@ -19,6 +19,30 @@ HTTP_TIMEOUT = 90
 HTTP_PROXY = None
 HTTP_BUF_SIZE = 64*1024
 
+class SyncException(Exception):
+    """Base class for exceptions associated with Anki synching.
+
+    The original Syncer.sync() method consisted of dozens of lines of code
+    with various return values to reflect normal or aberrant results of the
+    sync.  Exceptions are a preferable way to handle the flow because we can
+    refactor sync() into its components and still have the exceptions bubble
+    up, reducing the need to check and propagate return values from the main
+    sync() to its callers.
+    """
+    pass
+
+
+class SanityCheckFailedException(SyncException):
+    pass
+
+
+class BadSyncAuthorisation(SyncException):
+    pass
+
+
+class ServerRequestedAbort(SyncException):
+    pass
+
 # Incremental syncing
 ##########################################################################
 
@@ -63,7 +87,7 @@ class Syncer:
             self.col.rollback()
             self.col.modSchema(False)
             self.col.save()
-            return "sanityCheckFailed"
+            raise SanityCheckFailedException  #was: return "sanityCheckFailed"
 
     def finalize(self):
         # finalize
@@ -111,11 +135,11 @@ class Syncer:
         meta = self.server.meta()
         self.col.log("rmeta", meta)
         if not meta:
-            return "badAuth"
+            raise BadSyncAuthorisation  # was: return "badAuth"
         # server requested abort?
         self.syncMsg = meta['msg']
         if not meta['cont']:
-            return "serverAbort"
+            raise ServerRequestedAbort  # was: return "serverAbort"
         else:
             # don't abort, but if 'msg' is not blank, gui should show 'msg'
             # after sync finishes and wait for confirmation before hiding
