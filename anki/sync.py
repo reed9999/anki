@@ -224,6 +224,19 @@ class Syncer:
         self.prepareToChunk()
 
     def sanityCheck(self):
+        """Apparently this is part 1 of a two-part sanity check.
+
+        I'm not exactly sure what's going on here yet but it seems to be
+        playing the role of assertions.
+
+        Eventually the various return values like "%s had usn = -1" % t should
+        be turned into exceptions, probably SanityCheckFailedException or maybe
+        a subclass. Then it will be very natural to raise the exception, catch
+        it in the wrapper, roll back the database, and reraise the exception.
+        That's much cleaner than trying to do it all with return values.
+        For now, though, I'm already refactoring exceptions above so don't get
+        too much in the works at once.
+        """
         if not self.col.basicCheck():
             return "failed basic check"
         for t in "cards", "notes", "revlog", "graves":

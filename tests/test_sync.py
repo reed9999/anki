@@ -8,6 +8,7 @@ from anki.sync import Syncer, LocalServer
 from anki.consts import STARTING_FACTOR
 from tests.shared import getEmptyCol, getEmptyDeckWith
 import anki.stdmodels
+import tests.collection_subclasses as subcls
 
 # Local tests
 ##########################################################################
@@ -17,6 +18,8 @@ deck2=None
 client=None
 server=None
 server2=None
+
+
 
 def setup_basic():
     global deck1, deck2, client, server
@@ -367,3 +370,11 @@ def test_filtered_delete():
     card.load()
     assert card.ivl > 10
     return
+
+
+@nose.with_setup(setup_modified)
+def test_with_bad_collection():
+    # deck1 = subcls.CollectionFailsWithFalse("Hello")
+    deck1.scm += 1
+    deck1.setMod()
+    assert client.sync() == "fail whatever"

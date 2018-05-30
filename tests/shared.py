@@ -44,3 +44,20 @@ def getUpgradeDeckPath(name="anki12.anki"):
     return dst
 
 testDir = os.path.dirname(__file__)
+
+
+# def getReturnsFalseDeck(schedVer=1):
+#     if len(getEmptyCol.master) == 0:
+#         (fd, nam) = tempfile.mkstemp(suffix=".anki2")
+#         os.close(fd)
+#         os.unlink(nam)
+#         col = aopen(nam)
+#         col.db.close()
+#         getEmptyCol.master = nam
+#     (fd, nam) = tempfile.mkstemp(suffix=".anki2")
+#     shutil.copy(getEmptyCol.master, nam)
+#     from anki.collection import _Collection
+#     _Collection.defaultSchedulerVersion = schedVer
+#     col = aopen(nam)
+#     _Collection.defaultSchedulerVersion = 1
+#     return col
