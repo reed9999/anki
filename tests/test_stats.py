@@ -22,7 +22,7 @@ def test_graphs_empty():
     assert d.stats().report()
 
 def test_graphs():
-    from anki import Collection as aopen
+    from anki import new_or_existing_collection as aopen
     d = aopen(os.path.expanduser("~/test.anki2"))
     g = d.stats()
     rep = g.report()

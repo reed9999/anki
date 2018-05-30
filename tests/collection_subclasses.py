@@ -1,8 +1,8 @@
 import anki
 from anki.collection import _Collection
-from anki.storage import Collection as CollectionContainer
+from anki.storage import new_or_existing_collection
 
-class CollectionFailsWithFalse(CollectionContainer(u'xxx.anki2')):
+class CollectionFailsWithFalse(_Collection):
     # Let's try this the naive way....
     def __init__(self, name):
         super(name)

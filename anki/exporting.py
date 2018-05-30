@@ -7,7 +7,7 @@ import re, os, zipfile, shutil, unicodedata
 from anki.lang import _
 from anki.utils import ids2str, splitFields, json, namedtmp
 from anki.hooks import runHook
-from anki import Collection
+from anki import new_or_existing_collection
 
 class Exporter:
     def __init__(self, col, did=None):
@@ -122,7 +122,7 @@ class AnkiExporter(Exporter):
             os.unlink(path)
         except (IOError, OSError):
             pass
-        self.dst = Collection(path)
+        self.dst = new_or_existing_collection(path)
         self.src = self.col
         # find cards
         if not self.did:
@@ -318,7 +318,7 @@ class AnkiPackageExporter(AnkiExporter):
     # data they don't understand
     def _addDummyCollection(self, zip):
         path = namedtmp("dummy.anki2")
-        c = Collection(path)
+        c = new_or_existing_collection(path)
         n = c.newNote()
         n['Front'] = "This file requires a newer version of Anki."
         c.addNote(n)

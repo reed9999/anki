@@ -11,5 +11,5 @@ if sys.getfilesystemencoding().lower() in ("ascii", "ansi_x3.4-1968"):
     raise Exception("Anki requires a UTF-8 locale.")
 
 version="2.1.0beta38" # build scripts grep this line, so preserve formatting
-from anki.storage import Collection
-__all__ = ["Collection"]
+from anki.storage import new_or_existing_collection
+__all__ = ["new_or_existing_collection"]

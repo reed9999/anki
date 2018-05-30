@@ -4,7 +4,7 @@
 
 import os
 import unicodedata
-from anki import Collection
+from anki import new_or_existing_collection
 from anki.utils import intTime, splitFields, joinFields, incGuid
 from anki.importing.base import Importer
 from anki.lang import _
@@ -36,7 +36,7 @@ class Anki2Importer(Importer):
             raise Exception("V2 scheduler must be enabled to import this file.")
 
         self.dst = self.col
-        self.src = Collection(self.file)
+        self.src = new_or_existing_collection(self.file)
 
         if not importingV2 and self.col.schedVer() != 1:
             # if v2 scheduler enabled, can't import v1 decks that include scheduling

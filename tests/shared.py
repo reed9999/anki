@@ -1,10 +1,7 @@
 import tempfile, os, shutil
-# What was the purpose of this aopen name? It's quite nonstandard.
-from anki import Collection as aopen
-from anki import Collection
+from anki import new_or_existing_collection
 #To make the project PEP8 compliant, import here, not inline.
 from anki.collection import _Collection
-
 
 def assertException(exception, func):
     found = False
@@ -22,13 +19,13 @@ def getEmptyCol(schedVer=1):
         (fd, nam) = tempfile.mkstemp(suffix=".anki2")
         os.close(fd)
         os.unlink(nam)
-        col = aopen(nam)
+        col = new_or_existing_collection(nam)
         col.db.close()
         getEmptyCol.master = nam
     (fd, nam) = tempfile.mkstemp(suffix=".anki2")
     shutil.copy(getEmptyCol.master, nam)
     _Collection.defaultSchedulerVersion = schedVer
-    col = aopen(nam)
+    col = new_or_existing_collection(nam)
     _Collection.defaultSchedulerVersion = 1
     return col
 
@@ -39,7 +36,7 @@ def getEmptyDeckWith(**kwargs):
     (fd, nam) = tempfile.mkstemp(suffix=".anki2")
     os.close(fd)
     os.unlink(nam)
-    return aopen(nam, **kwargs)
+    return new_or_existing_collection(nam, **kwargs)
 
 def getUpgradeDeckPath(name="anki12.anki"):
     src = os.path.join(testDir, "support", name)
@@ -57,13 +54,13 @@ def getFailsWithFalseDeck(schedVer=1):
         (fd, nam) = tempfile.mkstemp(suffix=".anki2")
         os.close(fd)
         os.unlink(nam)
-        col = Collection(nam)
+        col = new_or_existing_collection(nam)
         col.db.close()
         getEmptyCol.master = nam
     (fd, nam) = tempfile.mkstemp(suffix=".anki2")
     shutil.copy(getEmptyCol.master, nam)
     _Collection.defaultSchedulerVersion = schedVer
-    col = Collection(nam)
+    col = new_or_existing_collection(nam)
     _Collection.defaultSchedulerVersion = 1
     return col
 
@@ -74,12 +71,12 @@ def getFailsWithExceptionDeck(schedVer=1):
         (fd, nam) = tempfile.mkstemp(suffix=".anki2")
         os.close(fd)
         os.unlink(nam)
-        col = Collection(nam)
+        col = new_or_existing_collection(nam)
         col.db.close()
         getEmptyCol.master = nam
     (fd, nam) = tempfile.mkstemp(suffix=".anki2")
     shutil.copy(getEmptyCol.master, nam)
     _Collection.defaultSchedulerVersion = schedVer
-    col = Collection(nam)
+    col = new_or_existing_collection(nam)
     _Collection.defaultSchedulerVersion = 1
     return col

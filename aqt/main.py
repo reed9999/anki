@@ -12,7 +12,7 @@ from threading import Thread
 
 from send2trash import send2trash
 from aqt.qt import *
-from anki import Collection
+from anki import new_or_existing_collection
 from anki.utils import  isWin, isMac, intTime, splitFields, ids2str, \
         devMode
 from anki.hooks import runHook, addHook
@@ -344,7 +344,7 @@ Debug info:
     def _loadCollection(self):
         cpath = self.pm.collectionPath()
 
-        self.col = Collection(cpath, log=True)
+        self.col = new_or_existing_collection(cpath, log=True)
 
         self.setEnabled(True)
         self.progress.setupDB(self.col.db)
