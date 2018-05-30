@@ -2,7 +2,7 @@
 
 import nose, os, shutil, time
 
-from anki import Collection as aopen, Collection
+from anki import new_or_existing_collection
 from anki.utils import intTime
 from anki.sync import Syncer, LocalServer
 from anki.consts import STARTING_FACTOR
@@ -221,7 +221,7 @@ def test_threeway():
     d3path = deck1.path.replace(".anki", "2.anki")
     shutil.copy2(deck1.path, d3path)
     deck1.reopen()
-    deck3 = aopen(d3path)
+    deck3 = new_or_existing_collection(d3path)
     client2 = Syncer(deck3, server)
     assert client2.sync() == "noChanges"
     # client 1 adds a card at time 1
@@ -264,9 +264,9 @@ def test_threeway2():
         shutil.copy2(c1.path, s1path)
         shutil.copy2(c1.path, c2path)
         # open them
-        c1 = Collection(c1.path)
-        c2 = Collection(c2path)
-        s1 = Collection(s1path, server=True)
+        c1 = new_or_existing_collection(c1.path)
+        c2 = new_or_existing_collection(c2path)
+        s1 = new_or_existing_collection(s1path, server=True)
         return c1, c2, s1, nid, cid
     c1, c2, s1, nid, cid = setup()
     # modify c1 then sync c1->s1
@@ -320,7 +320,7 @@ def test_threeway2():
 
 def _test_speed():
     t = time.time()
-    deck1 = aopen(os.path.expanduser("~/rapid.anki"))
+    deck1 = new_or_existing_collection(os.path.expanduser("~/rapid.anki"))
     for tbl in "revlog", "cards", "notes", "graves":
         deck1.db.execute("update %s set usn = -1 where usn != -1"%tbl)
     for m in deck1.models.all():

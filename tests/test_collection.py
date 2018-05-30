@@ -4,7 +4,7 @@ import os, tempfile
 from tests.shared import assertException, getEmptyCol
 from anki.stdmodels import addBasicModel, models
 
-from anki import Collection as aopen
+from anki import new_or_existing_collection as aopen
 
 newPath = None
 newMod = None

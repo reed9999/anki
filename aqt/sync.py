@@ -7,7 +7,7 @@ import gc
 
 from aqt.qt import *
 import aqt
-from anki import Collection
+from anki import new_or_existing_collection
 from anki.sync import Syncer, RemoteServer, FullSyncer, MediaSyncer, \
     RemoteMediaServer
 from anki.hooks import addHook, remHook
@@ -307,7 +307,7 @@ class SyncThread(QThread):
         self.syncMsg = ""
         self.uname = ""
         try:
-            self.col = Collection(self.path, log=True)
+            self.col = new_or_existing_collection(self.path, log=True)
         except:
             self.fireEvent("corrupt")
             return

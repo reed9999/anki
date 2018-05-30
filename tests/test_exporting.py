@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import nose, os, tempfile
-from anki import Collection as aopen
+from anki import new_or_existing_collection as aopen
 from anki.exporting import *
 from anki.importing import Anki2Importer
 from .shared import getEmptyCol
