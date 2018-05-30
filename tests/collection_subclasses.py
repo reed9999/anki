@@ -1,9 +1,12 @@
-from anki import Collection as aopen
+import anki
 from anki.collection import _Collection
+from anki.storage import Collection as CollectionContainer
 
-
-class CollectionFailsWithFalse(aopen):
+class CollectionFailsWithFalse(CollectionContainer(u'xxx.anki2')):
     # Let's try this the naive way....
+    def __init__(self, name):
+        super(name)
+
     def basicCheck(self):
         return False
 
