@@ -14,6 +14,12 @@ from anki.stdmodels import addBasicModel, addClozeModel, addForwardReverse, \
     addForwardOptionalReverse, addBasicTypingModel
 
 def Collection(path, lock=True, server=False, sync=True, log=False):
+    print ("Naming a function starting with an upper case letter, as with ")
+    print ("Collection(), is severely deprecated. Please call this function")
+    print ("by the name new_or_existing_collection() instead.")
+    return new_or_existing_collection(path, lock, server, sync, log)
+
+def new_or_existing_collection(path, lock=True, server=False, sync=True, log=False):
     "Open a new or existing collection. Path must be unicode."
     assert path.endswith(".anki2")
     path = os.path.abspath(path)
