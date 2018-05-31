@@ -1,13 +1,18 @@
 Note on this refactor branch
 ---------------------
+This refactoring subproject is now dormant for me -- reed9999
 
-This branch is intended to help me (reed9999) learn to read the Anki code
+This branch is/was intended to help me learn to read the Anki code
 by making it easier to follow while maintaining the same functionality.
 I will try to only commit code to this branch that passes all tests.
 Where test coverage has gaps, I will try to illustrate them and clearly 
 mark them in commit comments.
 
 See also README.refactor
+
+Alas, the Anki project isn't really interested in maintaining clean code. It's
+not even really an open-source project in anything but name. I don't know that
+I'll continue this to the point of trying to contribute tests.
 
 Windows & Mac users
 ---------------------

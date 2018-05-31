@@ -1,3 +1,10 @@
+Note on this refactor branch
+---------------------
+This was a self-educational idea I had that is now dormant. See 
+README.refactor and README.development to learn more.
+
+ -- reed9999
+
 Anki
 -------------------------------------
 
