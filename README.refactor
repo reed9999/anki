@@ -1,0 +1,48 @@
+reed9999 note: This branch is me attempting to refactor anki in a way
+that makes sense. I will try to only commit refactors that pass all tests.
+
+To start this branch I went a few commits back on anki master, just so I can have some bugs to play with if I want.
+
+This is a branch where I've attempted to refactor Anki code without changing
+functionality. My understanding is that the anki project does not want pull
+requests that merely refactor, but for me refactoring is an important way to 
+learn what's going on in the code, verify the existence and effectiveness of 
+tests, and motivate the creation of new tests.
+
+My hope is that eventually (1) the test suite is robust enough that 
+refactoring isn't perceived as a risk to code integrity, because unit tests
+will catch bugs (2) I can make some contributions off of this branch that 
+demonstrate the time saved by ``paying off'' the technical debt of tricky 
+code. Even if that doesn't happen, it's still a great learning exercise.
+  Philip Reed (reed9999)
+
+== Test coverage for sync (to be posted)
+
+sync_test.py doesn't appear to test for aberrant cases
+
+It seems that the unit test suite doesn't contain any tests for aberrant cases
+of sync.  For example, I don't see any tests of the conditions represented by
+return values of sanityCheckFailed, badAuth, or serverAbort. Would it be 
+worthwhile to create these tests? Perhaps mocks could be used to simulate 
+server-side problems.
+
+
+
+Background: For fun/educational purposes I've been refactoring the Anki code.
+I substituted exceptions for the three return values above but never caught 
+the exceptions. I expected unhandled exceptions to break the tests, but it 
+seems there are no tests provoking these states.
+
+This code that should fail some tests, but doesn't, is at:
+https://github.com/reed9999/anki/commit/b19cd226e883720c9e49037e1c594b93dab7b812
+
+
+
+Perhaps writing tests to provoke these cases would be a good way for me to 
+learn my way around Anki's sync code. 
+
+(I understand that pull requests with just refactoring are not desired,
+but my hope is that refactoring will help me become proficient enough to add 
+beneficial tests. It would be great if others found this branch useful but for 
+now it's just my personal project.)
+
